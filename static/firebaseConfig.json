@@ -1,0 +1,12 @@
+{
+  "type":"service_account",
+  "apiKey": "AIzaSyBAnc0Oz9Y5WEyjqyH385ue6L_UpkvLtew",
+  "authDomain": "apapachatestore.firebaseapp.com",
+  "databaseURL": "https://apapachatestore.firebaseio.com",
+  "projectId": "apapachatestore",
+  "client_email":"rayma9829@gmail.com",
+  "token_uri":"LQb7LtRf1a4yr3bUsGukvdbV0KlV8rBOrdsP25qs", 
+  "storageBucket": "apapachatestore.appspot.com",
+  "messagingSenderId": "529842451934",
+    "appId": "1:529842451934:web:9a29de330667b9727ad94f"
+}

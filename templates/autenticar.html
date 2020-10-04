@@ -1,0 +1,19 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="container align-items-center mt-4">
+    <div class="form-group col-sm-4" >
+        <form action="/storeManager" method="POST">
+            <div class="form-group">
+                <p>Iniciar sesion</p>
+                <input type="text" class="form-control" name="usuario" placeholder="Usuario" autofocus>
+                <input type="password" class="form-control" name="contrasena" placeholder="Contraseña">
+                <input type="submit" class="form-control btn btn-success" value="Iniciar">
+            </div>
+        </form>
+        <a href="/signup">
+            <button class="btn btn-danger form-control">Registrarse</button>
+        </a>
+    </div>
+</div>
+{% endblock %}

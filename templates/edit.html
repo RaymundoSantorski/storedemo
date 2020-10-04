@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="container align-items-center mt-4">
+    <div class="form-group col-sm-4" >
+        <form action="/update/{{ id }}" method="POST" enctype="multipart/form-data">
+            <input type="text" class="form-control" name="producto" id="producto" placeholder="Producto" value="{{ producto['Producto'] }}">
+            <div class="input-group mb-3">
+                <div>
+                    <input type="file" class="custom-file-input form-control" name="imagen" id="imagen" placeholder="Imagen" value="{{producto['Imagen']}}">
+                    <label class="custom-file-label">Elige un archivo</label>
+                </div>
+            </div>
+            <input type="text" class="form-control" name="descripcion" id="descripcion" placeholder="Descripcion" value="{{producto['Descripcion']}}">
+            <input type="number" class="form-control" name="precio" id="precio" placeholder="Precio" value="{{producto['Precio'] | int()}}">
+            <input type="number" class="form-control" name="inventario" id="inventario" placeholder="inventario" value="{{producto['Inventario'] | int()}}">
+            <input type="text" class="form-control" name="etiquetas" id="etiquetas" placeholder="Etiquetas" value="{{producto['Etiquetas']}}">
+            <input type="submit" class="form-control btn btn-success" value="Enviar">
+        </form>
+    </div>
+</div>
+{% endblock %}

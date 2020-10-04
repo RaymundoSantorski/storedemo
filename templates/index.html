@@ -1,0 +1,26 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+    <div class="row row-cols-1 row-cols-md-3 mt-5">
+    {% if productos %}
+    {% for key in productos %}
+    {% if productos[key]['Inventario'] | int() > 0 %}
+    {% with precio = productos[key]['Precio']|int() %}
+        <div class="col mb-4">
+          <div class="card h-90 bg-transparent border-0 align-content-center justify-content-center">
+            <a href="/producto/{{key}}" class="justify-content-center align-self-center">
+              <img src="{{url_for('static', filename=productos[key]['Imagen'])}}" class="card-img-top align-self-center shadow" alt="..." style="height: 300px; width: 300px;">
+            </a>
+            <div class="card-body justify-content-center align-content-center">
+              <h5 class="card-title text-center">{{productos[key]['Producto']}}</h5>
+              <p class="card-text text-center">{{productos[key]['Descripcion']}}</p>
+              <p class="card-text text-center">${{productos[key]['Precio']}}</p>
+            </div>
+          </div>
+        </div>
+    {% endwith %}
+    {% endif %}
+    {% endfor %}
+    {% endif %}
+    </div>
+{% endblock %}

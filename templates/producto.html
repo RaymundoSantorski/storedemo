@@ -1,0 +1,19 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="">
+    <div class="col mb-4">
+        <div class="card h-90 bg-transparent border-0 align-content-center justify-content-center">
+          <img src="{{url_for('static', filename=productos['Imagen'])}}" class="card-img-top align-self-center shadow" alt="..." style="height: 500px; width: 500px;">
+          <div class="card-body justify-content-center align-content-center">
+            <h5 class="card-title text-center">{{productos['Producto']}}</h5>
+            <p class="card-text text-center">{{productos['Descripcion']}}</p>
+            <p class="card-text text-center">${{productos['Precio']}}</p>
+            <div class="">
+              <a class="btn btn-success" href="/addproduct/{{productos['Precio']|int()}}">Agregar a carrito</a>
+            </div>
+          </div>
+        </div>
+      </div>
+</div>
+{% endblock %}
