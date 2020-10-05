@@ -244,11 +244,23 @@ def product():
     productos = {}
     data = db.get("Productos", "")
     if request.method == 'POST':
-        products = db.get("Productos", "")
         search = request.form['search']
-        for key in products:
-            if products[key]['Etiquetas'] == search:
-                productos[key] = products[key]
+        busquedas = db.get("Busquedas", "")
+        info = {
+            "Busqueda": search,
+            "Cantidad": 1
+        }
+        for key in data:
+            if data[key]['Etiquetas'] == search:
+                productos[key] = data[key]
+        for key in busquedas:
+            if busquedas[key]['Busqueda'] == search:
+                n = busquedas[key]['Cantidad']
+                n+=1
+                pa = "Busquedas/"+key
+                db.put(pa, "Cantidad", n)
+                return render_template("productos.html", productos = productos)
+        db.post("Busquedas", info)
         return render_template("productos.html", productos = productos)
     return render_template("productos.html", productos = data)
 

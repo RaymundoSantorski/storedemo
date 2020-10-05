@@ -2,6 +2,9 @@
 
 {% block log %}
 {% if opc == True%}
+<li class="nav-item">
+    <a href="/storeManager/search" class="nav-link">Busquedas</a>
+</li>
 <li class="nav-item dropdown">
     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -20,7 +23,7 @@
 {% block content %}
 <form action="/add" method="POST" enctype="multipart/form-data">
     <div class="container align-items-center mt-4">
-        <div class="form-group col-sm-4" >
+        <div class="form-group col-sm-4 offset-4" >
             <input type="text" class="form-control" name="producto" id="producto" placeholder="Nombre del producto" autofocus>
             <div class="input-group mb-3">
                 <div>

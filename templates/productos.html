@@ -9,6 +9,7 @@
 
 {% block content %}
 <div class="row row-cols-1 row-cols-md-3 mt-5">
+  {% if productos|length > 0 %}
     {% for key in productos %}
     {% if productos[key]['Inventario']|int() > 0 %}
     {% with precio = productos[key]['Precio']|int() %}
@@ -28,5 +29,8 @@
     {% endwith %}
     {% endif %}
     {% endfor %}
+  {% else %}
+    <p>No hay productos para mostrar</p>
+  {% endif %}
 </div>
 {% endblock %}
