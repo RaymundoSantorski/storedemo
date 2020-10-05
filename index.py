@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session, escape, jsonify
-import os, smtplib, pyrebase, PIL
+import os, smtplib, pyrebase, PIL, stripe
 from firebase import firebase 
 from PIL import Image
 
@@ -10,6 +10,9 @@ app.secret_key = 'mysecretkey'
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))
 target = os.path.join(APP_ROOT, 'static/')
 total = 0
+
+# stripe
+stripe.api_key = 'sk_test_51HU3xZEIyvFHfGwOFfxcJB1T75vwnNPwMaAkqu8dlhWsfi73XartM7rzvP8kGY3n3Rjdtc8XoGiTcs0BoijyChwp00ckcgeEK7'
 
 # firebase
 db = firebase.FirebaseApplication("https://apapachatestore.firebaseio.com")
@@ -87,6 +90,18 @@ def storeLogout():
     session.pop("username")
     flash('Has cerrado tu sesión')
     return redirect(url_for('storeManager'))
+
+@app.route('/storeManager/search')
+def storeSearch():
+    if "username" in session:
+        data = db.get("Busquedas", "")
+        name = escape(session["username"])
+        if(data):
+            return render_template("search.html", it = data, opc = True, name = name )
+        else:
+            return render_template("search.html", opc = True, name = name )
+    else:
+        return render_template("autenticar.html")
 
 @app.route("/add", methods = ['POST'])
 def add():
