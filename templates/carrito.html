@@ -1,5 +1,9 @@
 {% extends "layout.html" %}
 
+{% block stripe %}
+<script src="https://js.stripe.com/v3/"></script>
+{%  endblock%}
+
 {% block content %}
 {% if total %}
 <div class="container-lg" id="overlay">
@@ -39,6 +43,7 @@
 <div>
     <a href="/vaciarCarrito" class="btn btn-danger">Vaciar carrito</a>
 </div>
+<button id="checkout-button" class="btn btn-dark">Checkout</button>
 {% else %}
 <h1>Todavía no tienes productos en el carrito</h1>
 {% endif %}

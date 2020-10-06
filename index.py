@@ -311,6 +311,34 @@ def producto(id):
     producto = db.get("Productos", id)
     return render_template("producto.html", productos = producto, id = id)
 
+@app.route("/succesfulPayment")
+def succesfulPayment():
+    session.pop("total")
+    return render_template('successful.html')
+
+@app.route("/cancelledPayment")
+def cancelledPayment():
+    return render_template('cancel.html')
+
+@app.route('/create-checkout-session', methods=['POST'])
+def create_checkout_session():
+  sess = stripe.checkout.Session.create(
+    payment_method_types=['card'],
+    line_items=[{
+      'price_data': {
+        'currency': 'mxn',
+        'product_data': {
+          'name': 'T-shirt',
+        },
+        'unit_amount': int(escape(session['total']))*100,
+      },
+      'quantity': 1,
+    }],
+    mode='payment',
+    success_url='http://apapachatestore.herokuapp.com/succesfulPayment',
+    cancel_url='http://apapachatestore.herokuapp.com/cancelledPayment',
+  )
+  return jsonify(id=sess.id)
 
 if __name__ == '__main__': 
     app.run(debug=True, port=5500)
