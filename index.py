@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, flash, ses
 import os, smtplib, pyrebase, PIL, stripe
 from firebase import firebase 
 from PIL import Image
+from localStoragePy import localStoragePy
 
 app = Flask(__name__)
 
@@ -10,6 +11,7 @@ app.secret_key = 'mysecretkey'
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))
 target = os.path.join(APP_ROOT, 'static/')
 total = 0
+localStorage = localStoragePy('/')
 
 # stripe
 stripe.api_key = 'sk_test_51HU3xZEIyvFHfGwOFfxcJB1T75vwnNPwMaAkqu8dlhWsfi73XartM7rzvP8kGY3n3Rjdtc8XoGiTcs0BoijyChwp00ckcgeEK7'
@@ -285,12 +287,18 @@ def vaciarCarrito():
     flash("Has vaciado el carrito")
     return render_template('carrito.html')
 
-@app.route("/addproduct/<int:precio>")
-def agregar(precio):
+@app.route("/addproduct/<id>")
+def agregar(id):
+    data = db.get("Productos", id)
+    precio = int(data['Precio'])
     if 'total' in session:
+        items = escape(session['items'])
+        items = items+"\n"+data['Producto']
         session['total'] = int(escape(session['total']))+precio
-    else:
+        session['items'] = items
+    else: 
         session['total'] = precio
+        session['items'] = data['Producto']
     flash('El total es {}'.format(escape(session['total'])))
     return redirect(url_for('product'))
 
@@ -301,8 +309,11 @@ def successful():
 
 @app.route("/carrito")
 def carrito():
+    data = str(escape(session['items']))
+    dat = data.split(sep='\n')
+    print(dat)
     if 'total' in session:
-        return render_template('carrito.html', total = escape(session['total']))
+        return render_template('carrito.html', total = escape(session['total']), items = dat)
     else:
         return render_template('carrito.html')
 
@@ -322,23 +333,25 @@ def cancelledPayment():
 
 @app.route('/create-checkout-session', methods=['POST'])
 def create_checkout_session():
-  sess = stripe.checkout.Session.create(
-    payment_method_types=['card'],
-    line_items=[{
-      'price_data': {
-        'currency': 'mxn',
-        'product_data': {
-          'name': 'T-shirt',
-        },
-        'unit_amount': int(escape(session['total']))*100,
-      },
-      'quantity': 1,
-    }],
-    mode='payment',
-    success_url='http://apapachatestore.herokuapp.com/succesfulPayment',
-    cancel_url='http://apapachatestore.herokuapp.com/cancelledPayment',
-  )
-  return jsonify(id=sess.id)
+    data = str(escape(session['items']))
+    items = data.split(sep = '\n')
+    sess = stripe.checkout.Session.create(
+        payment_method_types=['card'],
+        line_items=[{
+            'price_data': {
+                'currency': 'mxn',
+                'product_data': {
+                    'name': items[0],
+                },
+                'unit_amount': int(escape(session['total']))*100,
+            },
+            'quantity': 1,
+        }],
+        mode='payment',
+        success_url='https://apapachatestore.herokuapp.com/succesfulPayment',
+        cancel_url='https://apapachatestore.herokuapp.com/cancelledPayment',
+    )
+    return jsonify(id=sess.id)
 
 if __name__ == '__main__': 
     app.run(debug=True, port=5500)

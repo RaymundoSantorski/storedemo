@@ -1,8 +1,9 @@
 var stripe = Stripe('pk_test_51HU3xZEIyvFHfGwOL8UDyTstXcodlWZ3aApx1WnbNbHdl3c1YZI5UzhltDJozjQjVor1NRA1uM0Q2TRLQMyfzOQT00zKsIIyAW');
-      var checkoutButton = document.getElementById('checkout-button');
 
-      checkoutButton.addEventListener('click', function() {
-        // Create a new Checkout Session using the server-side endpoint you
+var checkoutButton = document.getElementById('checkout-button');
+
+function checkout() {
+	// Create a new Checkout Session using the server-side endpoint you
         // created in step 3.
         fetch('/create-checkout-session', {
           method: 'POST',
@@ -24,4 +25,4 @@ var stripe = Stripe('pk_test_51HU3xZEIyvFHfGwOL8UDyTstXcodlWZ3aApx1WnbNbHdl3c1YZ
         .catch(function(error) {
           console.error('Error:', error);
         });
-      });
+      };

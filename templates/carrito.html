@@ -1,50 +1,27 @@
 {% extends "layout.html" %}
 
-{% block stripe %}
-<script src="https://js.stripe.com/v3/"></script>
-{%  endblock%}
-
 {% block content %}
 {% if total %}
-<div class="container-lg" id="overlay">
-    <div class="col mb-4">
-        <label id="total" class="total"><h1>${{total}}</h1></label>
-        <div id="items" class="items"></div>
-        <div class="pago" id="paypal-button-container"></div>
-        <script src="https://www.paypal.com/sdk/js?client-id=sb&currency=MXN" data-sdk-integration-source="button-factory"></script>
-        <script>
-            paypal.Buttons({
-                style: {
-                    shape: 'pill',
-                    color: 'black',
-                    layout: 'vertical',
-                    label: 'paypal',
-                    
-                },
-                createOrder: function(data, actions) {
-                    return actions.order.create({
-                        purchase_units: [{
-                            amount: {
-                                value: {{total}}
-                            }
-                        }]
-                    });
-                },
-                onApprove: function(data, actions) {
-                    return actions.order.capture().then(function(details) {
-                        alert('Transaction completed by ' + details.payer.name.given_name + '!');
-                        sucess(details.payer.name.given_name);
-                    });
-                }
-            }).render('#paypal-button-container');
-        </script><!--Paypal plugin-->
-    </div><!--popup-->
-</div> <!--overlay-->
-<div>
-    <a href="/vaciarCarrito" class="btn btn-danger">Vaciar carrito</a>
-</div>
-<button id="checkout-button" class="btn btn-dark">Checkout</button>
+    <table>
+        <tbody>
+        {% for item in items %}
+            <tr>
+                <td>{{ item }}</td>
+                <td>
+                    <a href="/edit/{{key}}" class="btn btn-primary">Editar</a>
+                    <a href="/delete/{{key}}" class="btn btn-danger">Borrar</a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <label id="total" class="total"><h1>${{total}}</h1></label>
+    <div id="items" class="items"></div>
+    <div>
+        <a href="/vaciarCarrito" class="btn btn-danger">Vaciar carrito</a>
+    </div>
+    <button id="checkout-button"  class="btn btn-dark" onclick="checkout()">Checkout</button>
 {% else %}
-<h1>Todavía no tienes productos en el carrito</h1>
+    <h1>Todavía no tienes productos en el carrito</h1>
 {% endif %}
 {% endblock %}
