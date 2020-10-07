@@ -1,0 +1,26 @@
+{% extends "layout.html" %}
+
+{% block content %}
+{% if total %}
+    <table>
+        <tbody>
+        {% for key in items %}
+            <tr>
+                <td>{{ productos[key]['Producto'] }}</td>
+                <td>
+                    <a href="/carritoRemove/{{key}}" class="btn btn-danger">Borrar</a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <label id="total" class="total"><h3>Total: ${{total}}</h3></label>
+    <div id="items" class="items"></div>
+    <div>
+        <a href="/vaciarCarrito" class="btn btn-danger">Vaciar carrito</a>
+    </div>
+    <button id="checkout-button"  class="btn btn-dark" onclick="checkout()">Checkout</button>
+{% else %}
+    <h1>Todavía no tienes productos en el carrito</h1>
+{% endif %}
+{% endblock %}
