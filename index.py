@@ -99,10 +99,18 @@ def storeSearch():
         name = escape(session["username"])
         if(data):
             return render_template("search.html", it = data, opc = True, name = name )
-        else:
-            return render_template("search.html", opc = True, name = name )
-    else:
-        return render_template("autenticar.html")
+        return render_template("search.html", opc = True, name = name )
+    return render_template("autenticar.html")
+
+@app.route('/storeManager/pages')
+def storePages():
+    if "username" in session:
+        data = db.get("Pagina", "")
+        name = escape(session["username"])
+        if(data):
+            return render_template("pages.html", it = data, opc = True, name = name )
+        return render_template("pages.html", opc = True, name = name )
+    return render_template("autenticar.html")
 
 @app.route("/add", methods = ['POST'])
 def add():
@@ -238,20 +246,70 @@ def signup():
     else:
         return render_template('signup.html')
 
-@app.route("/adduser", methods=['POST'])
-def adduser():
-    flash('Usuario registrado satisfactoriamente')
-    return redirect(url_for('storeManager'))
+@app.route('/changeName/<name>', methods=['GET', 'POST'])
+def changeName(name):
+    if request.method == 'POST':
+        usuarios = db.get("Usuarios", "")
+        password = request.form['password']
+        user = request.form['usuario']
+        for key in usuarios:
+            if usuarios[key]['Usuario'] == name and usuarios[key]['Contraseña'] == password:
+                for usuario in usuarios:
+                    if usuarios[usuario]['Usuario'] == user:
+                        flash('El usuario ya existe')
+                        return render_template('changeName_pass.html', name = name)
+                ruta = "Usuarios/"+key      
+                db.put_async(ruta,'Usuario',user)
+                flash('Nombre cambiado satisfactoriamente')
+                session['username'] = user
+                return redirect(url_for('storeManager'))
+        flash('Contraseña incorrecta')
+        return render_template('changeName_pass.html', name = name)
+    return render_template('changeName_pass.html', name = name)
 
+@app.route('/changePassword/<name>', methods=['GET', 'POST'])
+def changePassword(name):
+    if request.method == 'POST':
+        oldPass = request.form['oldPassword']
+        newPass = request.form['newPassword']
+        confirmPassword = request.form['confirmPassword']
+        usuarios = db.get("Usuarios", "")
+        for key in usuarios:
+            if usuarios[key]['Usuario'] == name and usuarios[key]['Contraseña'] == oldPass:
+                if newPass == confirmPassword:
+                    ruta = "Usuarios/"+key
+                    db.put_async(ruta, 'Contraseña', newPass)
+                    session.pop('username')
+                    flash('Contraseña cambiada con exito, debes volver a iniciar sesion')
+                    return redirect(url_for('storeManager'))
+                flash('Las contraseñas no coinciden')
+                return render_template('changePassword.html', name = name)
+        flash('Contraseña incorrecta')
+        return render_template('changePassword.html', name = name)
+    return render_template('changePassword.html', name = name)
 
 #apapachateStore
 @app.route("/")
 def index():
+    pagina = db.get("Pagina", "")
+    for key in pagina:
+        if pagina[key]['Pagina'] == "Index":        
+            n = pagina[key]['Visitas']
+            n+=1
+            ruta = "Pagina/"+key
+            db.put_async(ruta, 'Visitas', n)
     productos = db.get("Productos", "")
     return render_template('index.html', productos = productos)
 
 @app.route("/productos", methods = ['GET', 'POST'])
 def product():
+    pagina = db.get("Pagina", "")
+    for key in pagina:
+        if pagina[key]['Pagina'] == "Productos":        
+            n = pagina[key]['Visitas']
+            n+=1
+            ruta = "Pagina/"+key
+            db.put_async(ruta, 'Visitas', n)
     productos = {}
     data = db.get("Productos", "")
     if request.method == 'POST':
@@ -297,13 +355,15 @@ def agregar(id):
     flash('El total es {}'.format(escape(session['total'])))
     return redirect(url_for('product'))
 
-
-@app.route("/successful")
-def successful():
-    return render_template("successful.html")
-
 @app.route("/carrito")
 def carrito():
+    pagina = db.get("Pagina", "")
+    for key in pagina:
+        if pagina[key]['Pagina'] == "Carrito":        
+            n = pagina[key]['Visitas']
+            n+=1
+            ruta = "Pagina/"+key
+            db.put_async(ruta, 'Visitas', n)
     if 'total' in session:
         productos = db.get("Productos", "")
         data = str(escape(session['items']))
@@ -342,16 +402,26 @@ def succesfulPayment():
     message = 'Subject: {}\n\n{}'.format(subject, message)
     for email in emaillist:
         server.sendmail('apapachatestore@gmail.com', email, message)
+    pagina = db.get("Pagina", "")
+    for key in pagina:
+        if pagina[key]['Pagina'] == "succesfulPayment":        
+            n = pagina[key]['Visitas']
+            n+=1
+            ruta = "Pagina/"+key
+            db.put_async(ruta, 'Visitas', n)
     flash('Pago aplicado correctamente')
     return render_template('successful.html')
 
 @app.route("/cancelledPayment")
 def cancelledPayment():
+    pagina = db.get("Pagina", "")
+    for key in pagina:
+        if pagina[key]['Pagina'] == "CancelledPayment":        
+            n = pagina[key]['Visitas']
+            n+=1
+            ruta = "Pagina/"+key
+            db.put_async(ruta, 'Visitas', n)
     flash('Pago cancelado')
-    cancel = db.get("Paginas", "CancelledPayment")
-    n = cancel['Visitas']
-    n+=1
-    db.put_async('Paginas/CancelledPayment', 'Visitas', n)
     return redirect(url_for('carrito'))
 
 @app.route('/create-checkout-session', methods=['POST'])

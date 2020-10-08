@@ -9,7 +9,7 @@
     </a>
     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
         <a href="/storeManager" class="dropdown-item">Manager</a>
-        <a href="/storeManager/pages" class="dropdown-item">Paginas</a>
+        <a href="/storeManager/search" class="dropdown-item">Busquedas</a>
         <a class="dropdown-item" href="/changeName/{{name}}">Cambiar nombre</a>
         <a class="dropdown-item" href="/changePassword/{{name}}">Cambiar contraseña</a>
         <div class="dropdown-divider"></div>
@@ -39,21 +39,19 @@
     </div>
 </form>
 
-<div class="container m-auto col-sm-6">
+<div class="container m-auto col-sm-4">
     <table class="table table-striped table-dark table-bordered table-responsive">
         <thead class="thead-dark">
             <tr>
-                <td>ID</td>
-                <td>Busqueda</td>
-                <td>Cantidad</td>
+                <td>Pagina</td>
+                <td>Visitas</td>
             </tr>
         </thead>
         <tbody>
             {% for key in it %}
                 <tr>
-                    <td>{{ key }}</td>
-                    <td>{{ it[key]["Busqueda"] }}</td>
-                    <td>{{ it[key]["Cantidad"] }}</td>
+                    <td>{{ it[key]['Pagina'] }}</td>
+                    <td>{{ it[key]['Visitas'] }}</td>
                 </tr>
             {% endfor %}
 

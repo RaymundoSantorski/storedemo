@@ -2,17 +2,16 @@
 
 {% block log %}
 {% if opc == True%}
-<li class="nav-item">
-    <a href="/storeManager/search" class="nav-link">Busquedas</a>
-</li>
 <li class="nav-item dropdown">
     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         {{name}}
     </a>
     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-        <a class="dropdown-item" href="#">Cambiar nombre</a>
-        <a class="dropdown-item" href="#">Cambiar contraseña</a>
+        <a href="/storeManager/search" class="dropdown-item">Busquedas</a>
+        <a href="/storeManager/pages" class="dropdown-item">Paginas</a>
+        <a class="dropdown-item" href="/changeName/{{name}}">Cambiar nombre</a>
+        <a class="dropdown-item" href="/changePassword/{{name}}">Cambiar contraseña</a>
         <div class="dropdown-divider"></div>
         <a class="dropdown-item" href="/storeManager/logout">Salir</a>
     </div>
