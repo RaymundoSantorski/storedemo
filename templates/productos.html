@@ -1,5 +1,10 @@
 {% extends "layout.html" %}
 
+{% block script %}
+<script src="https://js.stripe.com/v3/"></script>
+<script src="{{url_for('static', filename='script.js')}}"></script>
+{% endblock %}
+
 {% block log %}
 <form class="form-inline" method="POST" action="/productos">
   <input class="form-control mr-sm-2" type="search" placeholder="Search" name="search" aria-label="Search">
@@ -20,8 +25,9 @@
               <h5 class="card-title text-center">{{productos[key]['Producto']}}</h5>
               <p class="card-text text-center">{{productos[key]['Descripcion']}}</p>
               <p class="card-text text-center">${{productos[key]['Precio']}}</p>
-              <div class="">
-                <a class="btn btn-success" href="/addproduct/{{key}}">Agregar a carrito</a>
+              <div class=" m-auto d-flex">
+                <a class="btn btn-success" href="/addproduct/{{key}}/product">Agregar a carrito</a>
+                <button class="btn btn-dark" onclick="payNow('{{key}}')">Comprar ahora</a>
               </div>
             </div>
           </div>

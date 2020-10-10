@@ -299,7 +299,11 @@ def index():
             ruta = "Pagina/"+key
             db.put_async(ruta, 'Visitas', n)
     productos = db.get("Productos", "")
-    return render_template('index.html', productos = productos)
+    lista = {}
+    for key in productos:
+        if productos[key]['Etiquetas'] == 'importante':
+            lista[key] = productos[key]
+    return render_template('index.html', productos = lista)
 
 @app.route("/productos", methods = ['GET', 'POST'])
 def product():
@@ -339,8 +343,8 @@ def vaciarCarrito():
     flash("Has vaciado el carrito")
     return render_template('carrito.html')
 
-@app.route("/addproduct/<id>")
-def agregar(id):
+@app.route("/addproduct/<id>/<origen>")
+def agregar(id, origen):
     data = db.get("Productos", id)
     precio = int(data['Precio'])
     print(id)
@@ -353,7 +357,7 @@ def agregar(id):
         session['total'] = precio
         session['items'] = id
     flash('El total es {}'.format(escape(session['total'])))
-    return redirect(url_for('product'))
+    return redirect(url_for(origen))
 
 @app.route("/carrito")
 def carrito():
@@ -424,10 +428,11 @@ def cancelledPayment():
     flash('Pago cancelado')
     return redirect(url_for('carrito'))
 
-@app.route('/create-checkout-session', methods=['POST'])
-def create_checkout_session():
-    data = str(escape(session['items']))
-    items = data.split(sep = '\n')
+@app.route('/payNow/<id>', methods=['POST'])
+def payNow(id):
+    producto = db.get("Productos", id)
+    prod = producto['Producto']
+    precio = producto['Precio']
     sess = stripe.checkout.Session.create(
         billing_address_collection='auto',
         shipping_address_collection={
@@ -438,15 +443,42 @@ def create_checkout_session():
             'price_data': {
                 'currency': 'mxn',
                 'product_data': {
-                    'name': items[0],
+                    'name': prod,
+                },
+                'unit_amount': precio*100,
+            },
+            'quantity': 1,
+        }],
+        mode='payment',
+        success_url='http://localhost:5500/succesfulPayment',
+        cancel_url='http://localhost:5500/productos',
+    )
+    return jsonify(id=sess.id)
+
+@app.route('/create-checkout-session', methods=['POST'])
+def create_checkout_session():
+    data = str(escape(session['items']))
+    items = data.split(sep = '\n')
+    prod = db.get("Productos", items[0])
+    sess = stripe.checkout.Session.create(
+        billing_address_collection='auto',
+        shipping_address_collection={
+            'allowed_countries': ['MX'],
+        },
+        payment_method_types=['card'],
+        line_items=[{
+            'price_data': {
+                'currency': 'mxn',
+                'product_data': {
+                    'name': prod['Producto'],
                 },
                 'unit_amount': int(escape(session['total']))*100,
             },
             'quantity': 1,
         }],
         mode='payment',
-        success_url='https://apapachatestore.herokuapp.com/succesfulPayment',
-        cancel_url='https://apapachatestore.herokuapp.com/cancelledPayment',
+        success_url='https://www.apapachatestore.com/succesfulPayment',
+        cancel_url='https://www.apapachatestore.com/cancelledPayment',
     )
     return jsonify(id=sess.id)
 
