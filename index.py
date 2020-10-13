@@ -41,9 +41,6 @@ if(data):
 
 #email smtp
 emaillist = ['rayma9829@gmail.com',]
-server = smtplib.SMTP('smtp.gmail.com', 587)
-server.starttls()
-server.login('apapachatestore@gmail.com','apapachatecontrasena')
 
 #storeManager
 @app.route("/storeManager", methods =['POST','GET']) 
@@ -148,11 +145,15 @@ def add():
                     "Etiquetas": etiquetas
                     }
             db.post("Productos", data)
+            server = smtplib.SMTP('smtp.gmail.com', 587)
+            server.starttls()
+            server.login('apapachatestore@gmail.com','apapachatecontrasena')
             message = 'Se ha agregado un producto satisfactoriamente\nCorreo enviado desde apapachatestore.herokuapp.com'
             subject = 'Producto agregado'
             message = 'Subject: {}\n\n{}'.format(subject, message)
             for email in emaillist:
                 server.sendmail('apapachatestore@gmail.com', email, message)
+            server.close()
             flash('Producto agregado satisfactoriamente')
             return redirect(url_for('storeManager'))
 
@@ -162,11 +163,15 @@ def delete(id):
     print(img)
     db.delete("Productos", id)
     os.remove('static/'+img)
+    server = smtplib.SMTP('smtp.gmail.com', 587)
+    server.starttls()
+    server.login('apapachatestore@gmail.com','apapachatecontrasena')
     message = 'El producto ha sido eliminado satisfactoriamente\nCorreo enviado desde apapachatestore.herokuapp.com'
     subject = 'Producto eliminado'
     message = 'Subject: {}\n\n{}'.format(subject, message)
     for email in emaillist:
         server.sendmail('apapachatestore@gmail.com', email, message)
+    server.close()
     flash('Producto eliminado satisfactoriamente')
     return redirect(url_for('storeManager'))
 
@@ -204,11 +209,15 @@ def update(id):
             db.put(pa, "Inventario", inventario)
         if etiquetas:
             db.put(pa, "Etiquetas", etiquetas)
+        server = smtplib.SMTP('smtp.gmail.com', 587)
+        server.starttls()
+        server.login('apapachatestore@gmail.com','apapachatecontrasena')
         message = 'El producto ha sido actualizado satisfactoriamente\nCorreo enviado desde apapachatestore.herokuapp.com'
         subject = 'Producto actualizado'
         message = 'Subject: {}\n\n{}'.format(subject, message)
         for email in emaillist:
             server.sendmail('apapachatestore@gmail.com', email, message)
+        server.close()
         flash('Producto actualizado satisfactoriamente')
         return redirect(url_for('storeManager'))
 
@@ -233,6 +242,7 @@ def signup():
                         "email": correo
                     }
                     db.post("Usuarios", data)
+                    server = smtplib.SMTP('smtp.gmail.com', 587)
                     message = 'Se ha registrado un nuevo usuario\nCorreo enviado desde apapachatestore.herokuapp.com'
                     subject = 'Alta de usuario'
                     message = 'Subject: {}\n\n{}'.format(subject, message)
@@ -401,11 +411,15 @@ def producto(id):
 @app.route("/succesfulPayment")
 def succesfulPayment():
     session.pop("total")
+    server = smtplib.SMTP('smtp.gmail.com', 587)
+    server.starttls()
+    server.login('apapachatestore@gmail.com','apapachatecontrasena')
     message = 'Se ha completado una compra, prepara todo para realizar el envio\n\nCorreo enviado desde apapachatestore.herokuapp.com'
     subject = 'Compra completada'
     message = 'Subject: {}\n\n{}'.format(subject, message)
     for email in emaillist:
         server.sendmail('apapachatestore@gmail.com', email, message)
+    server.close()
     pagina = db.get("Pagina", "")
     for key in pagina:
         if pagina[key]['Pagina'] == "succesfulPayment":        

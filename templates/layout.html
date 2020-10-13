@@ -10,8 +10,9 @@
     <link rel="stylesheet" href="{{url_for('static', filename='estilos.css')}}">
     <!--<link rel=stylesheet href="{{url_for('static', filename='estilos.css')}} ">-->
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="Venta de ropa y accesorios, contamos con precios de mayoreo y menudeo">
-    <script src="https://js.stripe.com/v3/"></script>
+    {% block script %}
+    {% endblock %}    
+
 </head>
 
 <body>
@@ -69,8 +70,6 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
         integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV"
         crossorigin="anonymous"></script>
-    <script src="{{url_for('static', filename='script.js')}}"></script>
-
 </body>
 <!--body-->
 
