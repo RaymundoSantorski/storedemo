@@ -83,12 +83,14 @@ def storeManager():
         else:
             return render_template("autenticar.html")
 
+#cerrar sesión
 @app.route('/storeManager/logout')
 def storeLogout():
     session.pop("username")
     flash('Has cerrado tu sesión')
     return redirect(url_for('storeManager'))
 
+#ver las busquedas que se han hecho
 @app.route('/storeManager/search')
 def storeSearch():
     if "username" in session:
@@ -99,6 +101,7 @@ def storeSearch():
         return render_template("search.html", opc = True, name = name )
     return render_template("autenticar.html")
 
+#ver las paginas que se han visitado
 @app.route('/storeManager/pages')
 def storePages():
     if "username" in session:
@@ -109,6 +112,7 @@ def storePages():
         return render_template("pages.html", opc = True, name = name )
     return render_template("autenticar.html")
 
+#agregar un producto a la lista
 @app.route("/add", methods = ['POST'])
 def add():
     if not os.path.isdir(target):
@@ -157,6 +161,7 @@ def add():
             flash('Producto agregado satisfactoriamente')
             return redirect(url_for('storeManager'))
 
+#eliminar producto de la lista
 @app.route("/delete/<id>")
 def delete(id):
     img = db.get("Productos", id)["Imagen"]
@@ -175,12 +180,14 @@ def delete(id):
     flash('Producto eliminado satisfactoriamente')
     return redirect(url_for('storeManager'))
 
+#editar informacion de un producto
 @app.route("/edit/<id>")
 def edit(id):
     data = db.get("Productos", id)
     print(data)
     return render_template("edit.html", producto = data, id = id)
 
+#actualizar la informacion cambiada de un producto
 @app.route("/update/<id>", methods = ['POST'])
 def update(id):
     if request.method == 'POST':
@@ -221,6 +228,7 @@ def update(id):
         flash('Producto actualizado satisfactoriamente')
         return redirect(url_for('storeManager'))
 
+#añadir nuevo usuario
 @app.route("/signup", methods=['GET','POST'])
 def signup():
     if request.method == 'POST':    
@@ -256,6 +264,7 @@ def signup():
     else:
         return render_template('signup.html')
 
+#cambiar nombre de usuario
 @app.route('/changeName/<name>', methods=['GET', 'POST'])
 def changeName(name):
     if request.method == 'POST':
@@ -277,6 +286,7 @@ def changeName(name):
         return render_template('changeName_pass.html', name = name)
     return render_template('changeName_pass.html', name = name)
 
+#cambiar contraseña
 @app.route('/changePassword/<name>', methods=['GET', 'POST'])
 def changePassword(name):
     if request.method == 'POST':
@@ -298,7 +308,9 @@ def changePassword(name):
         return render_template('changePassword.html', name = name)
     return render_template('changePassword.html', name = name)
 
-#apapachateStore
+#####apapachateStore#######
+
+#pagina de inicio
 @app.route("/")
 def index():
     pagina = db.get("Pagina", "")
@@ -315,6 +327,7 @@ def index():
             lista[key] = productos[key]
     return render_template('index.html', productos = lista)
 
+#pagina con todos los productos
 @app.route("/productos", methods = ['GET', 'POST'])
 def product():
     pagina = db.get("Pagina", "")
@@ -347,12 +360,14 @@ def product():
         return render_template("productos.html", productos = productos)
     return render_template("productos.html", productos = data)
 
+#elimina todos los items del carrito de compras
 @app.route("/vaciarCarrito")
 def vaciarCarrito():
     session.pop("total")
     flash("Has vaciado el carrito")
     return render_template('carrito.html')
 
+#añade un producto al carrito de compras
 @app.route("/addproduct/<id>/<origen>")
 def agregar(id, origen):
     data = db.get("Productos", id)
@@ -369,6 +384,7 @@ def agregar(id, origen):
     flash('El total es {}'.format(escape(session['total'])))
     return redirect(url_for(origen))
 
+#pagina del carrito de compras
 @app.route("/carrito")
 def carrito():
     pagina = db.get("Pagina", "")
@@ -385,7 +401,8 @@ def carrito():
         return render_template('carrito.html', total = escape(session['total']), items = dat, productos = productos)
     else:
         return render_template('carrito.html')
-
+ 
+#elimina un item del carrito de compras 
 @app.route("/carritoRemove/<id>")
 def carritoRemove(id):
     producto = db.get("Productos", id)
@@ -403,11 +420,13 @@ def carritoRemove(id):
     flash('Producto eliminado del carrito')
     return redirect(url_for('carrito'))
 
+#pagina de un solo producto
 @app.route("/producto/<id>")
 def producto(id):
     producto = db.get("Productos", id)
     return render_template("producto.html", productos = producto, id = id)
 
+#pago exitoso
 @app.route("/succesfulPayment")
 def succesfulPayment():
     session.pop("total")
@@ -430,6 +449,7 @@ def succesfulPayment():
     flash('Pago aplicado correctamente')
     return render_template('successful.html')
 
+#pago cancelado
 @app.route("/cancelledPayment")
 def cancelledPayment():
     pagina = db.get("Pagina", "")
@@ -442,6 +462,7 @@ def cancelledPayment():
     flash('Pago cancelado')
     return redirect(url_for('carrito'))
 
+#pagar un unico item sin agregar a carrito
 @app.route('/payNow/<id>', methods=['POST'])
 def payNow(id):
     producto = db.get("Productos", id)
@@ -464,11 +485,12 @@ def payNow(id):
             'quantity': 1,
         }],
         mode='payment',
-        success_url='http://localhost:5500/succesfulPayment',
-        cancel_url='http://localhost:5500/productos',
+        success_url='https://www.apapachatestore.com/succesfulPayment',
+        cancel_url='https://www.apapachatestore.com/productos',
     )
     return jsonify(id=sess.id)
 
+#crea una sesion de pago seguro en stripe
 @app.route('/create-checkout-session', methods=['POST'])
 def create_checkout_session():
     data = str(escape(session['items']))
